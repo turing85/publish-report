@@ -1,0 +1,257 @@
+name: Publish Test Report
+
+author: Marco Bungart (@turing85)
+
+description: |
+  Action to publish a Test Report.
+
+  The report is published as check and can be posted as comment to a PR.
+
+github-token:
+  action-input:
+    input: GITHUB_TOKEN
+    is-default: true
+
+  permissions:
+    actions: write
+    actions-reason: to cancel the current workflow
+
+    checks: write
+    checks-reason: to write Reports as checks
+
+    pull-requests: write
+    pull-requests-reason: to create or update PR comment
+
+inputs:
+  cancel-workflow-on-error:
+    description: |
+      Whether the entire current workflow should be cancelled on error (i.e. when tests failed).
+    default: 'false'
+    required: true
+
+  checkout:
+    description: |
+      Whether a checkout should be performed
+    default: 'false'
+    required: true
+
+  recreate-comment:
+    description: |
+      Triggers the (re-)creation of the comment in a PR, that is updated with the reports.
+    default: 'false'
+    required: true
+
+  comment-enabled:
+    description: |
+      Whether a comment on the PR should be posted.
+    default: 'true'
+    required: true
+
+  comment-header:
+    description: |
+      The header to identify the PR comment. This is an invisible tag on the comment.
+    default: reports
+    required: true
+
+  comment-message-failure:
+    description: |
+      Message appended to the comment posted on the PR after the tests failed.
+
+      The message can be templated for replacement. The format feature of github-expressions (https://docs.github.com/en/actions/learn-github-actions/expressions#format) is used to replace placeholders. The following placeholder-mapping applies:
+      - {0} is inputs'.'report-name
+      - {1} is the number of successful tests
+      - {2} is the number of failed tests
+      - {3} is the number of skipped tests
+      - {4} is the URL to the HTML-Report
+    default: |
+      <details>
+        <summary><h3>😔 ${0} failed</h3></summary>
+  
+        | Passed | Failed | Skipped |
+        |--------|--------|---------|
+        | ✅ {1} | ❌ {2} | ⚠️ {3}   |
+  
+        You can see the report [here]({4}).
+      </details>
+    required: true
+
+  comment-message-recreate:
+    description: |
+      Initial text for the comment posted on the PR. Subsequent messages will be appended.
+    default: |
+      ## 🚦Reports🚦
+      Reports will be posted here as they get available.
+    required: true
+
+  comment-message-success:
+    description: |
+      Message appended to the comment posted on the PR after the tests succeeded. 
+
+      The message can be templated for replacement. The format feature of github-expressions (https://docs.github.com/en/actions/learn-github-actions/expressions#format) is used to replace placeholders. The following placeholder-mapping applies:
+      - {0} is inputs'.'report-name
+      - {1} is the number of successful tests
+      - {2} is the number of failed tests
+      - {3} is the number of skipped tests
+      - {4} is the URL to the HTML-Report
+    default: |
+      <details>
+        <summary><h3>🥳 {0} passed</h3></summary>
+
+        | Passed | Failed | Skipped |
+        |--------|--------|---------|
+        | ✅ {1} | ❌ {2} | ⚠️ {3}   |
+
+        You can see the report [here]({4}).
+      </details>
+    required: true
+
+  download-artifact-name:
+    description: |
+      The name of the artifact to download.
+    default: artifact
+    required: true
+
+  report-fail-on-error:
+    description: |
+      Whether an error in a test should fail the step.
+    default: 'true'
+    required: true
+
+  report-list-suites:
+    description: |
+      Limits which test suites are listed. Supported options:
+        - all
+        - only-failed
+    default: all
+    required: true
+
+  report-list-tests:
+    description: |
+    Limits which test cases are listed. Supported options:
+      - all
+      - only-failed
+      - none
+    default: all
+    required: true
+
+  report-name:
+    description: |
+      The name of the report. The Text "Report" will be appended to form the report name that is attached to the check.
+
+      So if we pass "JUnit" as report-name, the corresponding report will be called "JUnit Report".
+    default: JUnit
+    required: true
+
+  report-only-summary:
+    description: |
+      Allows you to generate only the summary.
+
+      If enabled, the report will contain a table listing each test results file and the number of passed, failed, and skipped tests.
+
+      Detailed listing of test suites and test cases will be skipped.
+    default: 'false'
+    required: true
+
+  report-path:
+    description: |
+      A glob path to the report files.
+    default: '**/*.xml'
+    required: true
+
+  report-reporter:
+    description: |
+      Format of test results. Supported options:
+        - dart-json
+        - dotnet-trx
+        - flutter-json
+        - java-junit
+        - jest-junit
+        - mocha-json
+        - mochawesome-json
+    default: java-junit
+    required: true
+
+outputs:
+  report-url:
+    description: |
+      URL to the report in workflow checks.
+    value: ${{ steps.generate-report.outputs.runHtmlUrl }}
+
+  tests-passed:
+    description: |
+      Number of tests passed.
+    value: ${{ steps.generate-report.outputs.passed }}
+
+  tests-failed:
+    description: |
+      Number of tests passed
+    value: ${{ steps.generate-report.outputs.failed }}
+
+  tests-skipped:
+    description: |
+      Number of tests passed
+    value: ${{ steps.generate-report.outputs.skipped }}
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout
+      if: ${{ inputs.checkout == 'true' }}
+      uses: actions/checkout@v3
+
+    - name: (Re-)create Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment == 'true' }}
+      with:
+        header: reports
+        hide_and_recreate: true
+        hide_classify: 'OUTDATED'
+        message: ${{ inputs.comment-message-recreate }}
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Download Test Report Artifacts
+      if: ${{ inputs.download-artifact-name != '' && inputs.recreate-comment != 'true' }}
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.download-artifact-name }}
+
+    - name: Generate Test Report
+      id: generate-report
+      if: ${{ inputs.recreate-comment != 'true' }}
+      uses: phoenix-actions/test-reporting@v10
+      with:
+        fail-on-error: ${{ inputs.report-fail-on-error }}
+        list-suites: ${{ inputs.report-list-suites }}
+        list-tests: ${{ inputs.report-list-tests }}
+        name: ${{ inputs.report-name }} Report
+        only-summary: ${{ inputs.only-summary }}
+        path: ${{ inputs.report-path }}
+        reporter: ${{ inputs.report-reporter }}
+        token: ${{ github.token }}
+
+    - name: Update PR status comment on success
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && steps.generate-report.conclusion == 'success' }}
+      with:
+        append: true
+        header: ${{ inputs.comment-header }}
+        message: ${{ format(inputs.comment-message-success, inputs.report-name, steps.generate-report.outputs.passed, steps.generate-report.outputs.failed, steps.generate-report.outputs.skipped, steps.generate-report.outputs.runHtmlUrl) }}
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Update PR status comment on failure
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && steps.generate-report.conclusion != 'success' }}
+      with:
+        append: true
+        header: ${{ inputs.comment-header }}
+        message: ${{ format(inputs.comment-message-failure, inputs.report-name, steps.generate-report.outputs.passed, steps.generate-report.outputs.failed, steps.generate-report.outputs.skipped, steps.generate-report.outputs.runHtmlUrl) }}
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Cancel Workflow
+      if: ${{ failure() && inputs.cancel-on-error == 'true' }}
+      uses: andymckay/cancel-action@0.3
+
+branding:
+  icon: upload
+  color: blue

@@ -1,0 +1,26 @@
+{
+  "projectName": "publish-report",
+  "projectOwner": "turing85",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "turing85",
+      "name": "Marco Bungart",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32584495?v=4",
+      "profile": "https://github.com/turing85",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true,
+  "commitConvention": "angular"
+}
