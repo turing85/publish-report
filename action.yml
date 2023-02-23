@@ -108,7 +108,7 @@ inputs:
   download-artifact-name:
     description: |
       The name of the artifact to download.
-    default: artifact
+    default: ''
     required: true
 
   report-fail-on-error:

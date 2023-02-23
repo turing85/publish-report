@@ -347,7 +347,10 @@ The message can be templated for replacement. The ]format feature of github-expr
   </td>
   <td>The name of the artifact to download.</td>
   <td>✅</td>
-  <td></td>
+  <td>
+
+`''`
+  </td>
   </tr>
 
   <tr>
