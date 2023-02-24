@@ -43,7 +43,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`test-reporting@v10`][report]
+[`phoenix-actions/test-reporting@v10`][report]
 
   </td>
   </tr>
@@ -51,7 +51,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`cancel-action@0.3`][cancel]
+[`andymckay/cancel-action@0.3`][cancel]
 
   </td>
   </tr>
