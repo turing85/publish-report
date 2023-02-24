@@ -225,7 +225,7 @@ runs:
         list-suites: ${{ inputs.report-list-suites }}
         list-tests: ${{ inputs.report-list-tests }}
         name: ${{ inputs.report-name }} Report
-        only-summary: ${{ inputs.only-summary }}
+        only-summary: ${{ inputs.report-only-summary }}
         path: ${{ inputs.report-path }}
         reporter: ${{ inputs.report-reporter }}
         token: ${{ github.token }}
