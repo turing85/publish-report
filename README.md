@@ -27,7 +27,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`acmarocchino/sticky-pull-request-comment@v2`][checkout]
+[`marocchino/sticky-pull-request-comment@v2`][comment]
 
   </td>
   </tr>
