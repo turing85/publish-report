@@ -65,7 +65,7 @@ inputs:
       - {4} is the URL to the HTML-Report
     default: |
       <details>
-        <summary><h3>😔 ${0} failed</h3></summary>
+        <summary><h3>😔 {0} failed</h3></summary>
   
         | Passed | Failed | Skipped |
         |--------|--------|---------|
@@ -232,7 +232,7 @@ runs:
 
     - name: Update PR status comment on success
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && success() }}
+      if: ${{ steps.generate-report.conclusion == 'success' && github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' }}
       with:
         append: true
         header: ${{ inputs.comment-header }}
@@ -241,7 +241,7 @@ runs:
 
     - name: Update PR status comment on failure
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && failure() }}
+      if: ${{ (failure() || steps.generate-report.conclusion != 'success') && github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' }}
       with:
         append: true
         header: ${{ inputs.comment-header }}
@@ -249,7 +249,7 @@ runs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Cancel Workflow
-      if: ${{ failure() && inputs.cancel-workflow-on-error == 'true' }}
+      if: ${{ (failure() || steps.generate-report.conclusion != 'success') && inputs.cancel-workflow-on-error == 'true' }}
       uses: andymckay/cancel-action@0.3
 
 branding:
