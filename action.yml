@@ -219,7 +219,7 @@ runs:
     - name: Generate Test Report
       id: generate-report
       if: ${{ inputs.recreate-comment != 'true' }}
-      uses: phoenix-actions/test-reporting@v10
+      uses: turing85/test-reporting@feature/31-make-failure-text-optional
       with:
         fail-on-error: ${{ inputs.report-fail-on-error }}
         list-suites: ${{ inputs.report-list-suites }}
@@ -232,7 +232,7 @@ runs:
 
     - name: Update PR status comment on success
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && steps.generate-report.conclusion == 'success' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && success() }}
       with:
         append: true
         header: ${{ inputs.comment-header }}
@@ -241,7 +241,7 @@ runs:
 
     - name: Update PR status comment on failure
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && steps.generate-report.conclusion != 'success' }}
+      if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && failure() }}
       with:
         append: true
         header: ${{ inputs.comment-header }}
@@ -249,7 +249,7 @@ runs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Cancel Workflow
-      if: ${{ failure() && inputs.cancel-on-error == 'true' }}
+      if: ${{ failure() && inputs.cancel-workflow-on-error == 'true' }}
       uses: andymckay/cancel-action@0.3
 
 branding:
