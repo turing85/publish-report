@@ -280,7 +280,7 @@ The message can be templated for replacement. The [format feature of github-expr
 
 ```markdown
 <details>
-  <summary><h3>😔 ${0} failed</h3></summary>
+  <summary><h3>😔 {0} failed</h3></summary>
 
   | Passed | Failed | Skipped |
   |--------|--------|---------|
