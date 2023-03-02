@@ -3,8 +3,10 @@ name: Release
 on:
   pull_request:
     types: [closed]
+    branches:
+      - main
     paths:
-      - '.github/project.yml'
+      - .github/project.yml
 
 permissions:
   contents: write
@@ -12,8 +14,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-
-    if: ${{ github.event.pull_request.merged == true && github.base_ref == 'main' && github.head_ref == 'release' }}
 
     steps:
       - name: Checkout
@@ -37,15 +37,8 @@ jobs:
       - name: Tag main branch with release tag(s)
         run: |
           version="${{ steps.release-info.outputs.result }}"
-
-          pattern="^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+*$"
-          if ! [[ "${version}" =~ $pattern ]]
-          then
-            echo "version string [${version}] does not conform to pattern [0.0.0]. Aborting."
-            exit 1
-          fi
-
           extractor="^\([[:digit:]]\+\)\.\([[:digit:]]\+\)\.\([[:digit:]]\+\)$"
+
           major_version="$(echo "${version}" \
                       | sed "s|${extractor}|\1|g")"
           minor_version="$(echo "${version}" \

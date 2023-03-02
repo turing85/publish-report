@@ -1,0 +1,386 @@
+name: Pre-Release Checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - '.github/project.yml'
+
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'turing85/publish-report' }}
+
+permissions:
+  actions: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  recreate-comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Publish Report
+        uses: ./
+        with:
+          recreate-comment: true
+
+  validate-version-number:
+    runs-on: ubuntu-latest
+
+    needs:
+      - recreate-comment
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get Release Information
+        id: release-info
+        uses: mikefarah/yq@v4.31.2
+        with:
+          cmd: yq '.release.current-version' .github/project.yml
+
+      - name: Validate new version number
+        run: |
+          version="${{ steps.release-info.outputs.result }}"
+          
+          pattern="^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+*$"
+          if ! [[ "${version}" =~ $pattern ]]
+          then
+            echo "version string [${version}] does not conform to pattern [0.0.0]. Aborting."
+            exit 1
+          fi
+
+      - name: Update PR status comment on success
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ success() }}
+        with:
+          append: true
+          header: reports
+          message: ${{ format('<h3>🥳 <code>{0}</code> is a valid version number</h3>', steps.release-info.outputs.result) }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Update PR status comment on failure
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ failure() }}
+        with:
+          append: true
+          header: reports
+          message: ${{ format('<h3>😔 <code>{0}</code> is not a valid version number</h3>', steps.release-info.outputs.result) }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+  determine-test-projects:
+    runs-on: ubuntu-latest
+
+    needs:
+      - validate-version-number
+
+    outputs:
+      test-projects: ${{ steps.determine-test-projects.outputs.projects }}
+
+    steps:
+      - name: Git checkout advent-of-code-2022
+        uses: actions/checkout@v3
+        with:
+          repository: turing85/advent-of-code-2022
+          ref: main
+          path: advent-of-code-2022
+
+      - name: Determine Test Projects
+        id: determine-test-projects
+        run: |
+          pom_file=pom.xml
+          exclude_package_type=pom
+
+          cd advent-of-code-2022
+          current_dir="$(pwd)"
+
+          mapfile -t candidates < <(
+            find "${current_dir}" -type f -name "${pom_file}" \
+              | sed "s|^\(.*\)/${pom_file}$|\1|" \
+              | sort \
+              | uniq)
+
+          results=()
+          for candidate in "${candidates[@]}"
+          do
+            pom_packaging=0
+            grep --quiet \
+              "<packaging>${exclude_package_type}</packaging>" \
+              "${candidate}/${pom_file}" \
+                || pom_packaging="${?}"
+            if [[ "${pom_packaging}" -ne 0 ]]
+            then
+              results+=( $( \
+                  echo "${candidate}" \
+                    | sed "s|^${current_dir}/\(.*\)$|\1|g") )
+            fi
+          done
+          projects="$( \
+            echo "${results[@]}" \
+              | jq \
+                  --raw-input \
+                  --compact-output \
+                  'split(" ")')"
+          echo "projects=${projects}" >> "${GITHUB_OUTPUT}"
+
+  populate-cache:
+    runs-on: ubuntu-latest
+
+    needs:
+      - validate-version-number
+
+    steps:
+      - name: Git checkout advent-of-code-2022
+        uses: actions/checkout@v3
+        with:
+          repository: turing85/advent-of-code-2022
+          ref: main
+          path: advent-of-code-2022
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          cache: 'maven'
+          distribution: 'temurin'
+          java-version: 17
+        id: setup
+
+      - name: Populate Cache
+        if: ${{ steps.setup.outputs.cache-hit != 'true' }}
+        run: |
+          cd advent-of-code-2022
+          mvn \
+            --batch-mode \
+            go-offline:resolve-dependencies \
+            dependency-check:update-only
+
+      - name: Cancel Build
+        if: ${{ failure() }}
+        uses: andymckay/cancel-action@0.3
+
+  build:
+    runs-on: ubuntu-latest
+
+    needs:
+      - determine-test-projects
+      - populate-cache
+
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.determine-test-projects.outputs.test-projects) }}
+
+    steps:
+      - name: Git checkout advent-of-code-2022
+        uses: actions/checkout@v3
+        with:
+          repository: turing85/advent-of-code-2022
+          ref: main
+          path: advent-of-code-2022
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          cache: 'maven'
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Build
+        run: |
+          cd advent-of-code-2022
+          mvn \
+            --batch-mode \
+            --define ci-build \
+            package
+
+      - name: Upload Maven State
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: maven-state
+          path: '**/target/maven-*'
+          retention-days: 2
+
+      - name: Upload Compiled Classes
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: compiled-classes
+          path: '**/target/*classes'
+          retention-days: 2
+
+      - name: Upload JARs
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: jars
+          path: '**/target/*.jar'
+          retention-days: 2
+
+      - name: Cancel Build
+        if: ${{ failure() }}
+        uses: andymckay/cancel-action@0.3
+
+  test:
+    runs-on: ubuntu-latest
+
+    needs:
+      - determine-test-projects
+      - build
+
+    continue-on-error: true
+
+    strategy:
+      matrix:
+        project: ${{ fromJson(needs.determine-test-projects.outputs.test-projects) }}
+
+    steps:
+      - name: Git checkout advent-of-code-2022
+        uses: actions/checkout@v3
+        with:
+          repository: turing85/advent-of-code-2022
+          ref: main
+          path: advent-of-code-2022
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          cache: 'maven'
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Download Maven State
+        uses: actions/download-artifact@v3
+        with:
+          name: maven-state
+
+      - name: Download Compiled Classes
+        uses: actions/download-artifact@v3
+        with:
+          name: compiled-classes
+
+      - name: Download JARs
+        uses: actions/download-artifact@v3
+        with:
+          name: jars
+
+      - name: Run Tests
+        run: |
+          cd advent-of-code-2022
+          mvn \
+            --projects ${{ matrix.project }} \
+            --batch-mode \
+            --define ci-test \
+            package
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: test-report
+          path: '**/target/surefire-reports/TEST*.xml'
+          retention-days: 2
+
+      - name: Upload Coverage Report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          name: coverage-report
+          path: '**/target/jacoco/**/*.xml'
+          retention-days: 2
+
+  test-report:
+    runs-on: ubuntu-latest
+
+    needs:
+      - recreate-comment
+      - test
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Publish Report
+        uses: ./
+        with:
+          download-artifact-name: test-report
+          report-name: JUnit Test
+          report-only-summary: true
+          report-path: '**/target/surefire-reports/TEST*.xml'
+
+  owasp:
+    runs-on: ubuntu-latest
+
+    needs:
+      - recreate-comment
+      - build
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Git checkout advent-of-code-2022
+        uses: actions/checkout@v3
+        with:
+          repository: turing85/advent-of-code-2022
+          ref: main
+          path: advent-of-code-2022
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          cache: 'maven'
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Download Maven State
+        uses: actions/download-artifact@v3
+        with:
+          name: maven-state
+
+      - name: Download Compiled Classes
+        uses: actions/download-artifact@v3
+        with:
+          name: compiled-classes
+
+      - name: Download JARs
+        uses: actions/download-artifact@v3
+        with:
+          name: jars
+
+      - name: OWASP CVE Scan
+        run: |
+          cd advent-of-code-2022
+          mvn \
+            --batch-mode \
+            --define ci-owasp \
+            package \
+            dependency-check:aggregate
+
+      - name: Upload OWASP Scan Report
+        uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          if-no-files-found: error
+          name: owasp-report
+          path: '**/target/owasp/*.xml'
+          retention-days: 2
+
+      - name: Publish Report
+        if: ${{ always() }}
+        uses: ./
+        with:
+          report-list-tests: failed
+          report-name: OWASP Scan
+          report-path: '**/target/owasp/*.xml'
