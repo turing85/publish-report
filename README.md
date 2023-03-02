@@ -75,7 +75,6 @@ This snippet will post a comment with the given `comment-header` to the PR that 
 ```yaml
 jobs:
   ...
-  jobs:
   recreate-comment:
     runs-on: ubuntu-latest
 
@@ -100,7 +99,6 @@ We set the execution of the `Publish Report` step to `if: ${{ always() }}` so th
 ```yaml
 jobs:
   ...
-  jobs:
   test:
     runs-on: ubuntu-latest
 
