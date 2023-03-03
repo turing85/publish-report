@@ -612,6 +612,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
+## License
+
+This project is licensed under the [Apache License 2.0][apacheLicense]. The license file can be found [here][license].
+
 [checkout]: https://github.com/actions/checkout
 
 [comment]: https://github.com/marocchino/sticky-pull-request-comment
@@ -631,3 +635,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 [pr-comment]: https://github.com/turing85/advent-of-code-2022/pull/46#issuecomment-1441025081
 
 [workflow-run]: https://github.com/turing85/advent-of-code-2022/runs/11535320068
+
+[apacheLicense]: http://www.apache.org/licenses/LICENSE-2.0
+
+[license]: https://github.com/turing85/advent-of-code-2022/blob/main/LICENSE
