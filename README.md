@@ -638,4 +638,4 @@ This project is licensed under the [Apache License 2.0][apacheLicense]. The lice
 
 [apacheLicense]: http://www.apache.org/licenses/LICENSE-2.0
 
-[license]: https://github.com/turing85/advent-of-code-2022/blob/main/LICENSE
+[license]: https://github.com/turing85/publish-report/blob/main/LICENSE
