@@ -108,6 +108,8 @@ jobs:
       ...
       - name: Run Tests
         ...
+        continue-on-error: true # the publish step will fail, so we get a report when tests failed as well
+        ...
       ...
       - name: Publish Report
         uses: turing85/publish-report@v1
@@ -129,6 +131,7 @@ jobs:
             {1} tests were successful, {2} tests failed, {3} test were skipped.
 
             The report can be found [here]({4}).
+          report-fail-on-error: true # to fail when tests failed
           report-name: Tests
           report-path: '**/target/surefire-reports/TEST*.xml'
           report-reporter: java-junit
@@ -197,6 +200,10 @@ For a complex example please take a look at the [workflow of `github.com/turing8
   </tr>
 
   <tr>
+  <th colspan="4" align="center">General Inputs</th>
+  </tr> 
+
+  <tr>
   <td>
 
 `cancel-workflow-on-error`
@@ -223,6 +230,10 @@ For a complex example please take a look at the [workflow of `github.com/turing8
   </tr>
 
   <tr>
+  <th colspan="4" align="center">Comment-related Inputs</th>
+  </tr> 
+
+  <tr>
   <td>
 
 `recreate-comment`
@@ -236,6 +247,10 @@ For a complex example please take a look at the [workflow of `github.com/turing8
   </tr>
 
   <tr>
+  <td>
+
+`comment-enabled`
+  </td>
   <td>Whether a comment on the PR should be posted.</td>
   <td>✅</td>
   <td>
@@ -339,6 +354,11 @@ The message can be templated for replacement. The ]format feature of github-expr
   </tr>
 
   <tr>
+  <th colspan="4" align="center">Artifact-related Inputs</th>
+  </tr> 
+  <tr>
+
+  <tr>
   <td>
 
 `download-artifact-name`
@@ -350,6 +370,11 @@ The message can be templated for replacement. The ]format feature of github-expr
 `''`
   </td>
   </tr>
+
+  <tr>
+  <th colspan="4" align="center">Report-related Inputs</th>
+  </tr> 
+  <tr>
 
   <tr>
   <td>
@@ -497,21 +522,21 @@ Format of test results. Supported options:
   <tr>
   <td>
 
-`tests-passed`
+`tests-failed`
   </td>
-  <td>Number of tests passed.</td>
+  <td>Number of tests failed.</td>
   <td>
 
 `number`
   </td>
-</tr>
+  </tr>
 
   <tr>
   <td>
 
-`tests-failed`
+`tests-passed`
   </td>
-  <td>Number of tests failed.</td>
+  <td>Number of tests passed.</td>
   <td>
 
 `number`
