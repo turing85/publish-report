@@ -282,7 +282,7 @@ For a complex example please take a look at the [workflow of `github.com/turing8
 Message appended to the comment posted on the PR after the tests failed.
 
 The message can be templated for replacement. The [format feature of github-expressions][github-expressions] is used to replace placeholders. The following placeholder-mapping applies:
-- `{0}` is inputs'.'report-name
+- `{0}` is `inputs.report-name`
 - `{1}` is the number of successful tests
 - `{2}` is the number of failed tests
 - `{3}` is the number of skipped tests
@@ -330,8 +330,8 @@ Reports will be posted here as they get available.
 
 Message appended to the comment posted on the PR after the tests succeed.
 
-The message can be templated for replacement. The ]format feature of github-expressions][github-expressions] is used to replace placeholders. The following placeholder-mapping applies:
-- `{0}` is inputs'.'report-name
+The message can be templated for replacement. The [format feature of github-expressions][github-expressions] is used to replace placeholders. The following placeholder-mapping applies:
+- `{0}` is `inputs.report-name` 
 - `{1}` is the number of successful tests
 - `{2}` is the number of failed tests
 - `{3}` is the number of skipped tests
