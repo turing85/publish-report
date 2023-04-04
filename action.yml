@@ -121,16 +121,16 @@ inputs:
     description: |
       Limits which test suites are listed. Supported options:
         - all
-        - only-failed
+        - failed
     default: all
     required: true
 
   report-list-tests:
     description: |
-    Limits which test cases are listed. Supported options:
-      - all
-      - only-failed
-      - none
+      Limits which test cases are listed. Supported options:
+        - all
+        - failed
+        - none
     default: all
     required: true
 
@@ -219,7 +219,7 @@ runs:
     - name: Generate Test Report
       id: generate-report
       if: ${{ inputs.recreate-comment != 'true' }}
-      uses: turing85/test-reporting@feature/31-make-failure-text-optional
+      uses: phoenix-actions/test-reporting@v11
       with:
         fail-on-error: ${{ inputs.report-fail-on-error }}
         list-suites: ${{ inputs.report-list-suites }}

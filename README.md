@@ -43,7 +43,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`phoenix-actions/test-reporting@v10`][report]
+[`phoenix-actions/test-reporting@v11`][report]
 
   </td>
   </tr>
@@ -398,7 +398,7 @@ The message can be templated for replacement. The [format feature of github-expr
 
 Limits which test suites are listed. Supported options:
 - all
-- only-failed
+- failed
   </td>
   <td>✅</td>
   <td>
@@ -416,7 +416,7 @@ Limits which test suites are listed. Supported options:
 
 Limits which test cases are listed. Supported options:
 - all
-- only-failed
+- failed
 - none
   </td>
   <td>✅</td>
