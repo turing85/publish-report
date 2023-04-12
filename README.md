@@ -43,7 +43,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`phoenix-actions/test-reporting@v11`][report]
+[`phoenix-actions/test-reporting@v12`][report]
 
   </td>
   </tr>
