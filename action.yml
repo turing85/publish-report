@@ -204,7 +204,7 @@ runs:
       uses: marocchino/sticky-pull-request-comment@v2
       if: ${{ github.event_name == 'pull_request' && inputs.comment-enabled == 'true' && inputs.recreate-comment == 'true' }}
       with:
-        header: reports
+        header: ${{ inputs.comment-header }}
         hide_and_recreate: true
         hide_classify: 'OUTDATED'
         message: ${{ inputs.comment-message-recreate }}
