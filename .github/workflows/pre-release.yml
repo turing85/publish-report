@@ -197,6 +197,7 @@ jobs:
           mvn \
             --batch-mode \
             --define ci-build \
+            --projects ${{ matrix.project }} \
             package
 
       - name: Upload Maven State
@@ -277,9 +278,9 @@ jobs:
         run: |
           cd advent-of-code-2022
           mvn \
-            --projects ${{ matrix.project }} \
             --batch-mode \
             --define ci-test \
+            --projects ${{ matrix.project }} \
             package
 
       - name: Upload Test Report
