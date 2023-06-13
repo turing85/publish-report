@@ -315,7 +315,7 @@ The message can be templated for replacement. The [format feature of github-expr
   <td>
 
 ```markdown
-## 🚦Reports🚦
+## 🚦Reports for run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})🚦
 Reports will be posted here as they get available.
 ```
   </td>
