@@ -198,7 +198,7 @@ runs:
   steps:
     - name: Checkout
       if: ${{ inputs.checkout == 'true' }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: (Re-)create Comment
       uses: marocchino/sticky-pull-request-comment@v2
