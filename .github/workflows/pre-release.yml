@@ -201,7 +201,7 @@ jobs:
             package
 
       - name: Upload Maven State
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           if-no-files-found: error
@@ -210,7 +210,7 @@ jobs:
           retention-days: 2
 
       - name: Upload Compiled Classes
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           if-no-files-found: error
@@ -219,7 +219,7 @@ jobs:
           retention-days: 2
 
       - name: Upload JARs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           if-no-files-found: error
@@ -284,7 +284,7 @@ jobs:
             package
 
       - name: Upload Test Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           if-no-files-found: error
@@ -294,7 +294,7 @@ jobs:
 
       - name: Upload Coverage Report
         if: ${{ always() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
           name: coverage-report
@@ -370,7 +370,7 @@ jobs:
             dependency-check:aggregate
 
       - name: Upload OWASP Scan Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: ${{ always() }}
         with:
           if-no-files-found: error
