@@ -212,7 +212,7 @@ runs:
 
     - name: Download Test Report Artifacts
       if: ${{ inputs.download-artifact-name != '' && inputs.recreate-comment != 'true' }}
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.download-artifact-name }}
 

@@ -260,17 +260,17 @@ jobs:
           java-version: 17
 
       - name: Download Maven State
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: maven-state
 
       - name: Download Compiled Classes
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: compiled-classes
 
       - name: Download JARs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: jars
 
@@ -346,17 +346,17 @@ jobs:
           java-version: 17
 
       - name: Download Maven State
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: maven-state
 
       - name: Download Compiled Classes
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: compiled-classes
 
       - name: Download JARs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: jars
 
