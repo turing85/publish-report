@@ -168,7 +168,7 @@ jobs:
 
       - name: Cancel Build
         if: ${{ failure() }}
-        uses: andymckay/cancel-action@0.3
+        uses: andymckay/cancel-action@0.4
 
   build:
     runs-on: ubuntu-latest
@@ -239,7 +239,7 @@ jobs:
 
       - name: Cancel Build
         if: ${{ failure() }}
-        uses: andymckay/cancel-action@0.3
+        uses: andymckay/cancel-action@0.4
 
   test:
     runs-on: ubuntu-latest
