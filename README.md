@@ -19,7 +19,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`actions/checkout@v3`][checkout]
+[`actions/checkout@v4`][checkout]
 
   </td>
   </tr>
@@ -35,7 +35,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`actions/download-artifact@v3`][download]
+[`actions/download-artifact@v4`][download]
 
   </td>
   </tr>
@@ -48,10 +48,10 @@ This action is a composite action, it uses the following actions:
   </td>
   </tr>
 
-  <tr>
+<tr>
   <td>
 
-[`andymckay/cancel-action@0.3`][cancel]
+[`andymckay/cancel-action@0.4`][cancel]
 
   </td>
   </tr>
@@ -154,13 +154,13 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       ...
       - name: Run Tests
         ...
       ...
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           name: test-report
@@ -368,6 +368,32 @@ The message can be templated for replacement. The [format feature of github-expr
   <td>
 
 `''`
+  </td>
+  </tr>
+
+  <tr>
+  <td>
+
+`download-artifact-pattern`
+  </td>
+  <td>The pattern of the artifact to download.</td>
+  <td>✅</td>
+  <td>
+
+`''`
+  </td>
+  </tr>
+
+  <tr>
+  <td>
+
+`download-artifact-merge-multiple`
+  </td>
+  <td>If artifacts should be merged if multiple artifacts are downloaded.</td>
+  <td>✅</td>
+  <td>
+
+`'false'`
   </td>
   </tr>
 
