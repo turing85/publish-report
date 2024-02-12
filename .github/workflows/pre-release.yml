@@ -211,29 +211,29 @@ jobs:
             package
 
       - name: Upload Maven State
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           if-no-files-found: error
-          name: maven-state
+          name: maven-state-${{ matrix.project }}
           path: '**/target/maven-*'
           retention-days: 2
 
       - name: Upload Compiled Classes
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           if-no-files-found: error
-          name: compiled-classes
+          name: compiled-classes-${{ matrix.project }}
           path: '**/target/*classes'
           retention-days: 2
 
       - name: Upload JARs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           if-no-files-found: error
-          name: jars
+          name: jars-${{ matrix.project }}
           path: '**/target/*.jar'
           retention-days: 2
 
@@ -275,19 +275,19 @@ jobs:
           maven-version: 3.9.4
 
       - name: Download Maven State
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: maven-state
+          name: maven-state-${{ matrix.project }}
 
       - name: Download Compiled Classes
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: compiled-classes
+          name: compiled-classes-${{ matrix.project }}
 
       - name: Download JARs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: jars
+          name: jars-${{ matrix.project }}
 
       - name: Run Tests
         run: |
@@ -299,20 +299,20 @@ jobs:
             package
 
       - name: Upload Test Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           if-no-files-found: error
-          name: test-report
+          name: test-report-${{ matrix.project }}
           path: '**/target/surefire-reports/TEST*.xml'
           retention-days: 2
 
       - name: Upload Coverage Report
         if: ${{ always() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
-          name: coverage-report
+          name: coverage-report-${{ matrix.project }}
           path: '**/target/jacoco/**/*.xml'
           retention-days: 2
 
@@ -330,7 +330,8 @@ jobs:
       - name: Publish Report
         uses: ./
         with:
-          download-artifact-name: test-report
+          download-artifact-pattern: test-report-*
+          download-artifact-merge-multiple: true
           report-name: JUnit Test
           report-only-summary: true
           report-path: '**/target/surefire-reports/TEST*.xml'
@@ -366,19 +367,22 @@ jobs:
           maven-version: 3.9.4
 
       - name: Download Maven State
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: maven-state
+          pattern: maven-state-*
+          merge-multiple: true
 
       - name: Download Compiled Classes
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: compiled-classes
+          pattern: compiled-classes-*
+          merge-multiple: true
 
       - name: Download JARs
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: jars
+          pattern: jars-*
+          merge-multiple: true
 
       - name: OWASP CVE Scan
         run: |
@@ -390,7 +394,7 @@ jobs:
             dependency-check:aggregate
 
       - name: Upload OWASP Scan Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
           if-no-files-found: error

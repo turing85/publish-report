@@ -111,6 +111,18 @@ inputs:
     default: ''
     required: true
 
+  download-artifact-pattern:
+    description: |
+      The pattern of the artifacts to download.
+    default: ''
+    required: true
+
+  download-artifact-merge-multiple:
+    description: |
+      If artifacts should be merged if multiple artifacts are downloaded.
+    default: 'false'
+    required: true
+
   report-fail-on-error:
     description: |
       Whether an error in a test should fail the step.
@@ -211,10 +223,12 @@ runs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Download Test Report Artifacts
-      if: ${{ inputs.download-artifact-name != '' && inputs.recreate-comment != 'true' }}
-      uses: actions/download-artifact@v3
+      if: ${{ (inputs.download-artifact-name != '' || inputs.download-artifact-pattern != '') && inputs.recreate-comment != 'true' }}
+      uses: actions/download-artifact@v4
       with:
         name: ${{ inputs.download-artifact-name }}
+        pattern: ${{ inputs.download-artifact-pattern }}
+        merge-multiple: ${{ inputs.download-artifact-merge-multiple }}
 
     - name: Generate Test Report
       id: generate-report
