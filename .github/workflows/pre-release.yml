@@ -163,6 +163,8 @@ jobs:
           cd advent-of-code-2022
           mvn \
             --batch-mode \
+            --color always \
+            --define nvdApiKey=${{ secrets.NVD_API_KEY }} \
             go-offline:resolve-dependencies \
             dependency-check:update-only
 
@@ -206,6 +208,7 @@ jobs:
           cd advent-of-code-2022
           mvn \
             --batch-mode \
+            --color always \
             --define ci-build \
             --projects ${{ matrix.project }} \
             package
@@ -294,6 +297,7 @@ jobs:
           cd advent-of-code-2022
           mvn \
             --batch-mode \
+            --color always \
             --define ci-test \
             --projects ${{ matrix.project }} \
             package
@@ -389,7 +393,9 @@ jobs:
           cd advent-of-code-2022
           mvn \
             --batch-mode \
+            --color always \
             --define ci-owasp \
+            --define nvdApiKey=${{ secrets.NVD_API_KEY }} \
             package \
             dependency-check:aggregate
 
