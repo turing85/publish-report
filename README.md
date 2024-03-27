@@ -43,7 +43,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`phoenix-actions/test-reporting@v12`][report]
+[`phoenix-actions/test-reporting@v13`][report]
 
   </td>
   </tr>
@@ -104,7 +104,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       ...
       - name: Run Tests
         ...
