@@ -233,7 +233,7 @@ runs:
     - name: Generate Test Report
       id: generate-report
       if: ${{ inputs.recreate-comment != 'true' }}
-      uses: phoenix-actions/test-reporting@v13
+      uses: phoenix-actions/test-reporting@v14
       with:
         fail-on-error: ${{ inputs.report-fail-on-error }}
         list-suites: ${{ inputs.report-list-suites }}
