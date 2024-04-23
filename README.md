@@ -80,7 +80,7 @@ jobs:
 
     steps:
       - name: Publish Report
-        uses: turing85/publish-report@v1
+        uses: turing85/publish-report@v2
         with:
           checkout: 'true'
           comment-header: my-comment-header
@@ -112,7 +112,7 @@ jobs:
         ...
       ...
       - name: Publish Report
-        uses: turing85/publish-report@v1
+        uses: turing85/publish-report@v2
         if: ${{ always() }}
         with:
           # cancel-workflow-on-error: 'false' # If we do not want to cancel the whole workflow execution on error
@@ -178,7 +178,7 @@ jobs:
 
     steps:
       - name: Publish Report
-        uses: turing85/publish-report@v1
+        uses: turing85/publish-report@v2
         with:
           ...
           checkout: true
