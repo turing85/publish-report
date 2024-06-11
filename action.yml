@@ -264,7 +264,7 @@ runs:
 
     - name: Cancel Workflow
       if: ${{ (failure() || steps.generate-report.conclusion != 'success') && inputs.cancel-workflow-on-error == 'true' }}
-      uses: andymckay/cancel-action@0.4
+      uses: andymckay/cancel-action@0.5
 
 branding:
   icon: upload
