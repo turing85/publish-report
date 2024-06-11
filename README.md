@@ -51,7 +51,7 @@ This action is a composite action, it uses the following actions:
 <tr>
   <td>
 
-[`andymckay/cancel-action@0.4`][cancel]
+[`andymckay/cancel-action@0.5`][cancel]
 
   </td>
   </tr>
