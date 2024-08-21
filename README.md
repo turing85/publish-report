@@ -2,11 +2,9 @@
 
 # Github action to publish reports
 
-This action allows us to publish reports as github-actions check and produce comments on Pull requests with a summary of
-the report.
+This action allows us to publish reports as github-actions check and produce comments on Pull requests with a summary of the report.
 
 By identifying comments through `comment-header` (which will be transformed to an invisible `html` comment, containing the `comment-header` to identify comments controlled by this action), we can update an existing comment, adding more information as new reports get available over the run of a workflow.
-
 
 ## Components
 This action is a composite action, it uses the following actions:
@@ -43,7 +41,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`phoenix-actions/test-reporting@v14`][report]
+[`phoenix-actions/test-reporting@v15`][report]
 
   </td>
   </tr>
@@ -70,7 +68,8 @@ permissions:
 ```
 
 ### Post initial comment
-This snippet will post a comment with the given `comment-header` to the PR that triggered the workflow execution. Any existing comments with the same `comment-header` will be hidden as `OUTDATED`:
+This snippet will post a comment with the given `comment-header` to the PR that triggered the workflow execution.
+Any existing comments with the same `comment-header` will be hidden as `OUTDATED`:
 
 ```yaml
 jobs:
@@ -90,9 +89,11 @@ jobs:
 ```
 
 ### Generate test report and append message to existing comment
-The report will be generated from the files selected by the glob pattern in `pattern-path`. The name of the report will be `report-name` + `" Report"`.
+The report will be generated from the files selected by the glob pattern in `pattern-path`.
+The name of the report will be `report-name` + `" Report"`.
 
-If all tests succeeded, the message `comment-message-success` will be appended to the comment with the given `comment-header`. If tests failed, the message in `comment-message-failure` will be appended to the comment with the given `comment-header`.
+If all tests succeeded, the message `comment-message-success` will be appended to the comment with the given `comment-header`.
+If tests failed, the message in `comment-message-failure` will be appended to the comment with the given `comment-header`.
 
 We set the execution of the `Publish Report` step to `if: ${{ always() }}` so that it is also executed when tests fail (and we get a report).
 
@@ -139,11 +140,13 @@ jobs:
 ```
 
 ### Generate test report from a downloaded artifact and append message to existing comment
-When we have a scenario where we cannot or do not want the report generation the same job as the test, we can upload the test artifacts via [`actions/upload-artifact`][upload]. We can then execute report generation in a separate step, downloading said test artifacts.
+When we have a scenario where we cannot or do not want the report generation the same job as the test, we can upload the test artifacts via [`actions/upload-artifact`][upload].
+We can then execute report generation in a separate step, downloading said test artifacts.
 
-Notice that the `name` and `path` used in action `actions/upload-artifact` correlates with `download-artifact-name` and `report-path` in action `turing/publish-report`. 
+Notice that the `name` and `path` used in action `actions/upload-artifact` correlates with `download-artifact-name` and `report-path` in action `turing/publish-report`.
 
-We should configure the `test` job so that it does not fail when tests fail. This guarantees  that the `test-report` job is executed, and can fail (as long as `report-fail-on-error` is not set to `'false'`).
+We should configure the `test` job so that it does not fail when tests fail.
+This guarantees  that the `test-report` job is executed, and can fail (as long as `report-fail-on-error` is not set to `'false'`).
 
 ```yaml
 ...
@@ -208,7 +211,9 @@ For a complex example please take a look at the [workflow of `github.com/turing8
 
 `cancel-workflow-on-error`
   </td>
-  <td>Whether the entire current workflow should be cancelled on error (i.e. when tests failed).</td>
+  <td>
+Whether the entire current workflow should be cancelled on error (i.e. when tests failed).
+  </td>
   <td>✅</td>
   <td>
 
@@ -264,7 +269,10 @@ For a complex example please take a look at the [workflow of `github.com/turing8
 
 `comment-header`
   </td>
-  <td>The header to identify the PR comment. This is an invisible tag on the comment.</td>
+  <td>
+The header to identify the PR comment.
+This is an invisible tag on the comment.
+  </td>
   <td>✅</td>
   <td>
 
@@ -278,10 +286,11 @@ For a complex example please take a look at the [workflow of `github.com/turing8
 `comment-message-failure`
   </td>
   <td>
-
 Message appended to the comment posted on the PR after the tests failed.
 
-The message can be templated for replacement. The [format feature of github-expressions][github-expressions] is used to replace placeholders. The following placeholder-mapping applies:
+The message can be templated for replacement.
+The [format feature of github-expressions][github-expressions] is used to replace placeholders.
+The following placeholder-mapping applies:
 - `{0}` is `inputs.report-name`
 - `{1}` is the number of successful tests
 - `{2}` is the number of failed tests
@@ -310,7 +319,10 @@ The message can be templated for replacement. The [format feature of github-expr
 
 `comment-message-recreate`
   </td>
-  <td>Initial text for the comment posted on the PR. Subsequent messages will be appended.</td>
+  <td>
+Initial text for the comment posted on the PR.
+Subsequent messages will be appended.
+  </td>
   <td>✅</td>
   <td>
 
@@ -327,10 +339,11 @@ Reports will be posted here as they get available.
 `comment-message-success`
   </td>
   <td>
-
 Message appended to the comment posted on the PR after the tests succeed.
 
-The message can be templated for replacement. The [format feature of github-expressions][github-expressions] is used to replace placeholders. The following placeholder-mapping applies:
+The message can be templated for replacement.
+The [format feature of github-expressions][github-expressions] is used to replace placeholders.
+The following placeholder-mapping applies:
 - `{0}` is `inputs.report-name` 
 - `{1}` is the number of successful tests
 - `{2}` is the number of failed tests
@@ -421,8 +434,8 @@ The message can be templated for replacement. The [format feature of github-expr
 `report-list-suites`
   </td>
   <td>
-
-Limits which test suites are listed. Supported options:
+Limits which test suites are listed.
+Supported options:
 - all
 - failed
   </td>
@@ -439,8 +452,8 @@ Limits which test suites are listed. Supported options:
 `report-list-tests`
   </td>
   <td>
-
-Limits which test cases are listed. Supported options:
+Limits which test cases are listed.
+Supported options:
 - all
 - failed
 - none
@@ -458,8 +471,8 @@ Limits which test cases are listed. Supported options:
 `report-name`
   </td>
   <td>
-
-The name of the report. The Text "Report" will be appended to form the report name that is attached to the check.
+The name of the report.
+The Text "Report" will be appended to form the report name that is attached to the check.
 So if we pass "JUnit" as report-name, the corresponding report will be called "JUnit Report".
   </td>
   <td>✅</td>
@@ -475,7 +488,6 @@ So if we pass "JUnit" as report-name, the corresponding report will be called "J
 `report-only-summary`
   </td>
   <td>
-
 Allows you to generate only the summary.
 
 If enabled, the report will contain a table listing each test results file and the number of passed, failed, and skipped tests.
@@ -508,8 +520,8 @@ Detailed listing of test suites and test cases will be skipped.
 `report-reporter`
   </td>
   <td>
-
-Format of test results. Supported options:
+Format of test results.
+Supported options:
 - dart-json
 - dotnet-trx
 - flutter-json
@@ -584,7 +596,7 @@ Format of test results. Supported options:
 
 ## Showcase
 
-Screeenshots are taken from [this comment][pr-comment] and [this workflow run][workflow-run].
+Screenshots are taken from [this comment][pr-comment] and [this workflow run][workflow-run].
 
 <table>
   <tr>
@@ -662,11 +674,13 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification.
+Contributions of any kind welcome!
 
 ## License
 
-This project is licensed under the [Apache License 2.0][apacheLicense]. The license file can be found [here][license].
+This project is licensed under the [Apache License 2.0][apacheLicense].
+The license file can be found [here][license].
 
 [checkout]: https://github.com/actions/checkout
 
