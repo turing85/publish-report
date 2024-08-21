@@ -25,6 +25,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "LorenzoBettini",
+      "name": "Lorenzo Bettini",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1202254?v=4",
+      "profile": "http://www.lorenzobettini.it",
+      "contributions": [
+        "question",
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7,
