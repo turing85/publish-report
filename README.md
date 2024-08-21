@@ -665,6 +665,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/turing85"><img src="https://avatars.githubusercontent.com/u/32584495?v=4?s=100" width="100px;" alt="Marco Bungart"/><br /><sub><b>Marco Bungart</b></sub></a><br /><a href="https://github.com/turing85/publish-report/commits?author=turing85" title="Code">💻</a> <a href="#maintenance-turing85" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gregoryduckworth"><img src="https://avatars.githubusercontent.com/u/2647926?v=4?s=100" width="100px;" alt="Greg Duckworth"/><br /><sub><b>Greg Duckworth</b></sub></a><br /><a href="https://github.com/turing85/publish-report/commits?author=gregoryduckworth" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.lorenzobettini.it"><img src="https://avatars.githubusercontent.com/u/1202254?v=4?s=100" width="100px;" alt="Lorenzo Bettini"/><br /><sub><b>Lorenzo Bettini</b></sub></a><br /><a href="#question-LorenzoBettini" title="Answering Questions">💬</a> <a href="#ideas-LorenzoBettini" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
