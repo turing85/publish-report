@@ -109,7 +109,7 @@ jobs:
       ...
       - name: Run Tests
         ...
-        continue-on-error: true # the publish step will fail, so we get a report when tests failed as well
+        continue-on-error: true # the "publish" step will fail, so we get a report when tests failed as well
         ...
       ...
       - name: Publish Report
@@ -192,6 +192,157 @@ jobs:
   ...
 ```
 
+### Support for fork PRs
+When forks provide PRs, the corresponding workflow runs are limited in what they can do. This is done for security reasons. For details, please read ["Keeping your GitHub Actions and workflows secure Part 1: Preventing pwn requests" (`securitylab.github.com`)](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/). Two consequences are that we cannot
+
+- comment on PRs, and
+- upload test reports.
+
+This is where the `pull_request_target` and `workflow_run` events come into play.
+
+The action is designed to be used with the `pull_request_target` and `workflow_run` events. Often times, the same workflow file is used to build the default branch, as well as PRs. For a good user experience, the extension tries to "figure out" when the jobs that comment on PRs should be run. 
+Reports are generated and uploaded whenever `recreate-comment` is not `'true'`. The action tries to update the pull request comment if and only if:
+
+- `inputs.comment-enabled` is `'true'`, and
+- `inputs.recreate-comment` is not `'true'`, and
+  - either `github.event_name` is `'pull_request'` or `'pull_request_target'`,
+  - or `github.event.workflow_run.event` is `'pull_request'`
+
+The recommendation is to create three workflows:
+
+- one workflow for the initial comment,
+- the main workflow for the actual build, and
+- one workflow to update the comment wit the test results.
+
+The initial workflows may look something like this:
+```yaml
+name: Comment on PR
+
+on:
+  pull_request_target:
+    ...
+
+permissions:
+  pull-requests: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: (Re)create comment
+        uses: turing85/publish-report@v2
+        with:
+          github-token: ${{ github.token }}
+          comment-message-recreate: |
+            ## 🚦Reports 🚦
+            Reports will be posted here as they get available.
+          comment-message-pr-number: ${{ github.event.number }}
+          recreate-comment: true
+```
+
+You might notice that we override the `comment-message-recreate`. We will discuss this later.
+
+The workflow to update the comment could look like this:
+```yaml
+name: Build report
+
+on:
+  workflow_run:
+    workflows:
+      - "build"
+    types:
+      - completed
+
+permissions:
+  actions: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  report:
+    if: ${{ github.event.workflow_run.event == 'pull_request' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download PR number
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          name: pr-number
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Set PR number
+        id: get-pr-number
+        run: |
+          echo "pr-number=$(cat pr-number.txt)" | tee "${GITHUB_OUTPUT}"
+          rm -rf pr-number.txt
+
+      - name: Publish reports
+        uses: turing85/publish-report@feature/run-id-and-pr-number
+        with:
+          comment-message-pr-number: ${{ steps.get-pr-number.outputs.pr-number }}
+          download-artifact-name: test-reports
+          download-artifact-run-id: ${{ github.event.workflow_run.id }}
+          report-name: My Tests
+          report-path: '**/target/**/TEST*.xml'
+```
+
+We use an artifact named `pr-number` here. Since we use a `workflow_run`, we do not know anything of the pull request. Thus, we need some support from the actual build pipeline. It must create an artifact `pr-number` that contains a file `pr-number.txt`. the content of this file should be the number of the pull request.
+
+The necessary steps to generate this artifact in the actual build workflow may look like this:
+```yaml
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - main
+    ...
+  push:
+    branches:
+      - main
+    ...
+
+permissions:
+  actions: write
+  checks: write
+  pull-requests: write
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      ...
+      (build the application, generate the test artifacts)
+      ...
+      - name: Get PR number
+        id: get-pr-number
+        if: ${{ always() }}
+        run: |
+          echo "${{ github.event.number }}" > "pr-number.txt"
+
+      - name: Upload PR number
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: ${{ env.PR_NUMBER_ARTIFACT_NAME }}
+          path: pr-number.txt
+```
+
+Now on the point why we override the `comment-message-recreate`. The default value of this variable is:
+
+```
+## 🚦Reports for run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})🚦
+Reports will be posted here as they get available.
+```
+
+This text contains a link to the workflow run associated with this comment. While very convenient, we are not able to update the comment from the main workflow. The workflow for the initial comment runs in parallel to the main workflow, so there is no way to "figure out" the run id or run number.
+
+The workflow that updates the comment could of course add the link to the comment. However, at this point in time, the run is already over
+
 ### Complex example
 For a complex example please take a look at the [workflow of `github.com/turing85/advent-of-code-2022`][advent-workflow]
 
@@ -206,6 +357,18 @@ For a complex example please take a look at the [workflow of `github.com/turing8
   <th colspan="4" align="center">General Inputs</th>
   </tr> 
 
+  <tr>
+  <td>
+
+`github-token`
+  </td>
+  <td>
+The github-token to use.
+  </td>
+  <td>✅</td>
+  <td>
+
+`${{ github.token }}`
   <tr>
   <td>
 
@@ -367,6 +530,19 @@ The following placeholder-mapping applies:
   </tr>
 
   <tr>
+  <td>
+
+`comment-message-pr-number`
+  </td>
+  <td>The PR number to which the comment should be written.</td>
+  <td>✅</td>
+  <td>
+
+`${{ github.event.number }}`
+  </td>
+  </tr>
+
+  <tr>
   <th colspan="4" align="center">Artifact-related Inputs</th>
   </tr> 
   <tr>
@@ -407,6 +583,19 @@ The following placeholder-mapping applies:
   <td>
 
 `'false'`
+  </td>
+  </tr>
+
+  <tr>
+  <td>
+
+`download-artifact-run-id`
+  </td>
+  <td>The run-id for which the artifact should be downloaded.</td>
+  <td>✅</td>
+  <td>
+
+`${{ github.run_id }}`
   </td>
   </tr>
 
@@ -628,7 +817,7 @@ Screenshots are taken from [this comment][pr-comment] and [this workflow run][wo
   </td>
   </tr>
 
-  <tr><td style="text-align: center">Second report addded</td></tr>
+  <tr><td style="text-align: center">Second report added</td></tr>
 </table>
 
 <table>
