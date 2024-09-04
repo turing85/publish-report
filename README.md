@@ -193,7 +193,7 @@ jobs:
 ```
 
 ### Support for fork PRs
-When forks provide PRs, the corresponding workflow runs are limited in what they can do. This is done for security reasons. For details, please read ["Keeping your GitHub Actions and workflows secure Part 1: Preventing pwn requests" (`securitylab.github.com`)](https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/). Two consequences are that we cannot
+When forks provide PRs, the corresponding workflow runs are limited in what they can do. This is done for security reasons. For details, please read ["Keeping your GitHub Actions and workflows secure Part 1: Preventing pwn requests" (`securitylab.github.com`)][pwn]. Two consequences are that we cannot
 
 - comment on PRs, and
 - upload test reports.
@@ -889,6 +889,8 @@ The license file can be found [here][license].
 [advent-workflow]: https://github.com/turing85/advent-of-code-2022/blob/main/.github/workflows/build.yml
 
 [pr-comment]: https://github.com/turing85/advent-of-code-2022/pull/46#issuecomment-1441025081
+
+[pwn]: https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/
 
 [workflow-run]: https://github.com/turing85/advent-of-code-2022/runs/11535320068
 
