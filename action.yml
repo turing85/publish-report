@@ -41,6 +41,12 @@ inputs:
     default: 'false'
     required: true
 
+  override-comment:
+    description: |
+      Overrides the comment on a PR.
+    default: 'false'
+    required: true
+
   recreate-comment:
     description: |
       Triggers the (re-)creation of the comment in a PR, that is updated with the reports.
@@ -79,6 +85,14 @@ inputs:
   
         You can see the report [here]({4}).
       </details>
+    required: true
+
+  comment-message-override:
+    description: |
+      The new comment message. Notice that the old comment will be completely overridden.
+    default: |
+      ## 🚦Reports for run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})🚦
+      Reports will be posted here as they get available.
     required: true
 
   comment-message-recreate:
@@ -241,8 +255,17 @@ runs:
         number: ${{ inputs.comment-message-pr-number }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
+    - name: Override Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.override-comment == 'true' }}
+      with:
+        header: ${{ inputs.comment-header }}
+        message: ${{ inputs.comment-message-override }}
+        number: ${{ inputs.comment-message-pr-number }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+
     - name: Download Test Report Artifacts
-      if: ${{ (inputs.download-artifact-name != '' || inputs.download-artifact-pattern != '') && inputs.recreate-comment != 'true' }}
+      if: ${{ (inputs.download-artifact-name != '' || inputs.download-artifact-pattern != '') && inputs.recreate-comment != 'true' && inputs.override-comment != 'true' }}
       uses: actions/download-artifact@v4
       with:
         github-token: ${{ inputs.github-token }}
@@ -253,7 +276,7 @@ runs:
 
     - name: Generate Test Report
       id: generate-report
-      if: ${{ inputs.recreate-comment != 'true' }}
+      if: ${{ inputs.recreate-comment != 'true' && inputs.override-comment != 'true' }}
       uses: phoenix-actions/test-reporting@v15
       with:
         fail-on-error: ${{ inputs.report-fail-on-error }}
@@ -267,7 +290,7 @@ runs:
 
     - name: Update PR status comment on success
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ steps.generate-report.conclusion == 'success' && (github.event_name == 'pull_request' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' }}
+      if: ${{ steps.generate-report.conclusion == 'success' && (github.event_name == 'pull_request' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && inputs.override-comment != 'true' }}
       with:
         append: true
         header: ${{ inputs.comment-header }}
@@ -277,7 +300,7 @@ runs:
 
     - name: Update PR status comment on failure
       uses: marocchino/sticky-pull-request-comment@v2
-      if: ${{ (failure() || steps.generate-report.conclusion != 'success') && (github.event_name == 'pull_request' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' }}
+      if: ${{ (failure() || steps.generate-report.conclusion != 'success') && (github.event_name == 'pull_request' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && inputs.override-comment != 'true' }}
       with:
         append: true
         header: ${{ inputs.comment-header }}
