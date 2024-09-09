@@ -404,6 +404,19 @@ Whether the entire current workflow should be cancelled on error (i.e. when test
   <tr>
   <td>
 
+`override-comment`
+  </td>
+  <td>Overrides the comment on a PR.</td>
+  <td>✅</td>
+  <td>
+
+`'false'`
+  </td>
+  </tr>
+
+  <tr>
+  <td>
+
 `recreate-comment`
   </td>
   <td>Triggers the (re-)creation of the comment in a PR, that is updated with the reports.</td>
@@ -473,6 +486,24 @@ The following placeholder-mapping applies:
 
   You can see the report [here]({4}).
 </details>
+```
+  </td>
+  </tr>
+
+  <tr>
+  <td>
+
+`comment-message-override`
+  </td>
+  <td>
+The new comment message. Notice that the old comment will be completely overridden.
+  </td>
+  <td>✅</td>
+  <td>
+
+```markdown
+## 🚦Reports for run [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})🚦
+Reports will be posted here as they get available.
 ```
   </td>
   </tr>
