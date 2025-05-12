@@ -42,7 +42,7 @@ jobs:
 
       - name: Get Release Information
         id: release-info
-        uses: mikefarah/yq@v4.45.3
+        uses: mikefarah/yq@v4.45.4
         with:
           cmd: yq '.release.current-version' .github/project.yml
 
