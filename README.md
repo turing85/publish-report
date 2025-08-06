@@ -33,7 +33,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`actions/download-artifact@v4`][download]
+[`actions/download-artifact@v5`][download]
 
   </td>
   </tr>
@@ -266,7 +266,7 @@ jobs:
 
     steps:
       - name: Download PR number
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           github-token: ${{ github.token }}
           name: pr-number
