@@ -17,7 +17,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`actions/checkout@v4`][checkout]
+[`actions/checkout@v5`][checkout]
 
   </td>
   </tr>
@@ -105,7 +105,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       ...
       - name: Run Tests
         ...
@@ -157,7 +157,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       ...
       - name: Run Tests
         ...
