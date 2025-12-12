@@ -278,17 +278,17 @@ jobs:
           maven-version: 3.9.4
 
       - name: Download Maven State
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: maven-state-${{ matrix.project }}
 
       - name: Download Compiled Classes
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: compiled-classes-${{ matrix.project }}
 
       - name: Download JARs
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: jars-${{ matrix.project }}
 
@@ -371,19 +371,19 @@ jobs:
           maven-version: 3.9.4
 
       - name: Download Maven State
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: maven-state-*
           merge-multiple: true
 
       - name: Download Compiled Classes
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: compiled-classes-*
           merge-multiple: true
 
       - name: Download JARs
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: jars-*
           merge-multiple: true
