@@ -266,7 +266,7 @@ runs:
 
     - name: Download Test Report Artifacts
       if: ${{ (inputs.download-artifact-name != '' || inputs.download-artifact-pattern != '') && inputs.recreate-comment != 'true' && inputs.override-comment != 'true' }}
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         github-token: ${{ inputs.github-token }}
         name: ${{ inputs.download-artifact-name }}
