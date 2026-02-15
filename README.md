@@ -742,13 +742,14 @@ Detailed listing of test suites and test cases will be skipped.
   <td>
 Format of test results.
 Supported options:
-- dart-json
-- dotnet-trx
-- flutter-json
-- java-junit
-- jest-junit
-- mocha-json
-- mochawesome-json
+
+- `dart-json`
+- `dotnet-trx`
+- `flutter-json`
+- `java-junit`
+- `jest-junit`
+- `mocha-json`
+- `mochawesome-json`
   </td>
   <td>✅</td>
   <td>
