@@ -33,7 +33,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`actions/download-artifact@v6`][download]
+[`actions/download-artifact@v8`][download]
 
   </td>
   </tr>
@@ -163,7 +163,7 @@ jobs:
         ...
       ...
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: test-report
@@ -266,7 +266,7 @@ jobs:
 
     steps:
       - name: Download PR number
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           github-token: ${{ github.token }}
           name: pr-number
@@ -325,7 +325,7 @@ jobs:
           echo "${{ github.event.number }}" > "pr-number.txt"
 
       - name: Upload PR number
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: ${{ env.PR_NUMBER_ARTIFACT_NAME }}
