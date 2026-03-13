@@ -58,7 +58,7 @@ jobs:
           fi
 
       - name: Update PR status comment on success
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         if: ${{ success() }}
         with:
           append: true
@@ -67,7 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Update PR status comment on failure
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         if: ${{ failure() }}
         with:
           append: true
