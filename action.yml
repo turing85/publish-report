@@ -245,7 +245,7 @@ runs:
       uses: actions/checkout@v6
 
     - name: (Re-)create Comment
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3
       if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.recreate-comment == 'true' }}
       with:
         header: ${{ inputs.comment-header }}
@@ -256,7 +256,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
     - name: Override Comment
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3
       if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.override-comment == 'true' }}
       with:
         header: ${{ inputs.comment-header }}
@@ -289,7 +289,7 @@ runs:
         token: ${{ inputs.github-token }}
 
     - name: Update PR status comment on success
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3
       if: ${{ steps.generate-report.conclusion == 'success' && (github.event_name == 'pull_request' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && inputs.override-comment != 'true' }}
       with:
         append: true
@@ -299,7 +299,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
 
     - name: Update PR status comment on failure
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3
       if: ${{ (failure() || steps.generate-report.conclusion != 'success') && (github.event_name == 'pull_request' || github.event.workflow_run.event == 'pull_request') && inputs.comment-enabled == 'true' && inputs.recreate-comment != 'true' && inputs.override-comment != 'true' }}
       with:
         append: true
