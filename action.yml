@@ -13,9 +13,6 @@ github-token:
     is-default: true
 
   permissions:
-    actions: write
-    actions-reason: to cancel the current workflow
-
     checks: write
     checks-reason: to write Reports as checks
 
@@ -27,12 +24,6 @@ inputs:
     description: |
       The github-token to use.
     default: ${{ github.token }}
-    required: true
-
-  cancel-workflow-on-error:
-    description: |
-      Whether the entire current workflow should be cancelled on error (i.e. when tests failed).
-    default: 'false'
     required: true
 
   checkout:
@@ -307,12 +298,6 @@ runs:
         message: ${{ format(inputs.comment-message-failure, inputs.report-name, steps.generate-report.outputs.passed, steps.generate-report.outputs.failed, steps.generate-report.outputs.skipped, steps.generate-report.outputs.runHtmlUrl) }}
         number: ${{ inputs.comment-message-pr-number }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
-
-    - name: Cancel Workflow
-      if: ${{ (failure() || steps.generate-report.conclusion != 'success') && inputs.cancel-workflow-on-error == 'true' }}
-      uses: andymckay/cancel-action@0.5
-      with:
-        token: ${{ inputs.github-token }}
 
 branding:
   icon: upload

@@ -25,7 +25,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`marocchino/sticky-pull-request-comment@v2`][comment]
+[`marocchino/sticky-pull-request-comment@v3`][comment]
 
   </td>
   </tr>
@@ -41,15 +41,7 @@ This action is a composite action, it uses the following actions:
   <tr>
   <td>
 
-[`phoenix-actions/test-reporting@v15`][report]
-
-  </td>
-  </tr>
-
-<tr>
-  <td>
-
-[`andymckay/cancel-action@0.5`][cancel]
+[`phoenix-actions/test-reporting@v16`][report]
 
   </td>
   </tr>
@@ -61,7 +53,6 @@ This action is a composite action, it uses the following actions:
 name: My Workflow
 ...
 permissions:
-  actions: write       # Necessary to cancel workflow executions
   checks: write        # Necessary to write reports
   pull-requests: write # Necessary to comment on PRs
 ...
@@ -116,8 +107,6 @@ jobs:
         uses: turing85/publish-report@v2
         if: ${{ always() }}
         with:
-          # cancel-workflow-on-error: 'false' # If we do not want to cancel the whole workflow execution on error
-          # checkout: 'true' # not needed; project is already checked out 
           comment-header: my-comment-header
           comment-message-success: |
             YAY! {0} passed!  
@@ -369,21 +358,7 @@ The github-token to use.
   <td>
 
 `${{ github.token }}`
-  <tr>
-  <td>
-
-`cancel-workflow-on-error`
-  </td>
-  <td>
-Whether the entire current workflow should be cancelled on error (i.e. when tests failed).
-  </td>
-  <td>✅</td>
-  <td>
-
-`'false'`
-  </td>
-  </tr>
-
+  
   <tr>
   <td>
 
@@ -911,8 +886,6 @@ The license file can be found [here][license].
 [download]: https://github.com/actions/download-artifact
 
 [report]: https://github.com/phoenix-actions/test-reporting
-
-[cancel]: https://github.com/andymckay/cancel-action
 
 [github-expressions]: https://docs.github.com/en/actions/learn-github-actions/expressions#format
 
