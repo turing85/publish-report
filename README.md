@@ -335,6 +335,10 @@ The workflow that updates the comment could of course add the link to the commen
 ### Complex example
 For a complex example please take a look at the [workflow of `github.com/turing85/advent-of-code-2022`][advent-workflow]
 
+### Migration guide from `v2` to `v3`
+From `v2` to `v3`, the action `andymckay/cancel-action` was removed since it is no longer maintained. With this, the input `cancel-workflow-on-error` is no longer available and should be removed. Furthermore, workflows no longer need the `actions: write` permission, this should also be removed. 
+
+
 ## Inputs
 
 <table>
