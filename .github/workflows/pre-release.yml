@@ -10,7 +10,6 @@ on:
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
-  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'turing85/publish-report' }}
 
 permissions:
   actions: write
@@ -168,10 +167,6 @@ jobs:
             go-offline:resolve-dependencies \
             dependency-check:update-only
 
-      - name: Cancel Build
-        if: ${{ failure() }}
-        uses: andymckay/cancel-action@0.5
-
   build:
     runs-on: ubuntu-latest
 
@@ -239,10 +234,6 @@ jobs:
           name: jars-${{ matrix.project }}
           path: '**/target/*.jar'
           retention-days: 2
-
-      - name: Cancel Build
-        if: ${{ failure() }}
-        uses: andymckay/cancel-action@0.5
 
   test:
     runs-on: ubuntu-latest
