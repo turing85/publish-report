@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Publish Report
         uses: ./
@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Get Release Information
         id: release-info
@@ -85,7 +85,7 @@ jobs:
 
     steps:
       - name: Git checkout advent-of-code-2022
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: turing85/advent-of-code-2022
           ref: main
@@ -137,7 +137,7 @@ jobs:
 
     steps:
       - name: Git checkout advent-of-code-2022
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: turing85/advent-of-code-2022
           ref: main
@@ -180,7 +180,7 @@ jobs:
 
     steps:
       - name: Git checkout advent-of-code-2022
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: turing85/advent-of-code-2022
           ref: main
@@ -250,7 +250,7 @@ jobs:
 
     steps:
       - name: Git checkout advent-of-code-2022
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: turing85/advent-of-code-2022
           ref: main
@@ -320,7 +320,7 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Publish Report
         uses: ./
@@ -340,10 +340,10 @@ jobs:
 
     steps:
       - name: Git checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Git checkout advent-of-code-2022
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: turing85/advent-of-code-2022
           ref: main
